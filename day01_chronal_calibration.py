@@ -5,7 +5,7 @@ https://adventofcode.com/2018/day/1
 
 def parse_input():
     in_list = list()
-    with open('./day1_input.txt', 'r') as f:
+    with open('./day01_input.txt', 'r') as f:
         for line in f:
             in_list.append(int(line))
 
