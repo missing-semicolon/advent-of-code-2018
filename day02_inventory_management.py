@@ -45,6 +45,30 @@ def check_for_repeats(box):
     return has_two, has_three
 
 
+def count_diff(box1, box2):
+    count_diff = 0
+    samesies = list()
+    for char1, char2 in zip(box1, box2):
+        if char1 != char2:
+            count_diff += 1
+        else:
+            samesies.append(char1)
+
+        if count_diff > 1:
+            return
+    if count_diff == 1:
+        return ''.join(samesies)
+
+
+def find_diff(list_of_boxes):
+    for i, box1 in enumerate(list_of_boxes):
+        for box2 in list_of_boxes[i + 1:]:
+            repeat_flag = count_diff(box1, box2)
+
+            if repeat_flag:
+                return repeat_flag
+
+
 TEST_BOXES = [
     "abcdef",
     "bababc",
@@ -53,6 +77,16 @@ TEST_BOXES = [
     "aabcdd",
     "abcdee",
     "ababab",
+]
+
+TEST_BOXES_SIMILAR = [
+    'abcde',
+    'fghij',
+    'klmno',
+    'pqrst',
+    'fguij',
+    'axcye',
+    'wvxyz',
 ]
 
 assert check_for_repeats(TEST_BOXES[0]) == (False, False)
@@ -65,6 +99,10 @@ assert check_for_repeats(TEST_BOXES[6]) == (False, True)
 
 assert create_checksum(TEST_BOXES) == 12
 
+assert count_diff('abcde', 'fghij') is None
+assert count_diff('fghij', 'fguij') == 'fgij'
+
 if __name__ == '__main__':
     list_of_boxes = create_list_of_boxes()
     print(create_checksum(list_of_boxes))
+    print(find_diff(list_of_boxes))
