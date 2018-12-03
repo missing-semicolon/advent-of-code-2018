@@ -65,23 +65,18 @@ assert count_overlaps(find_overlaps(parse_slices(TEST_LIST))) == 4
 
 
 def get_unique_claim(list_of_slices):
-    claim_set = set()
-    repeat_set = set()
-    claim_dict = dict()
+    counts = find_overlaps(list_of_slices)
+    clean_slices = list()
     for slice_in in list_of_slices:
         slice_dict = get_coords_for_slice(slice_in)
-        slice_in_id = slice_dict.get('slice_id')
-        claim_set.add(slice_in_id)
-        for coord in slice_dict.get('coords'):
-            if coord in claim_dict:
-                claim_dict[coord].append(slice_in_id)
-                repeat_set.update(set(claim_dict[coord]))
-            else:
-                claim_dict[coord] = [slice_in_id]
-    return claim_set - repeat_set
+        coords = slice_dict.get('coords')
+        if (all(counts[coord] == 1 for coord in coords)):
+            clean_slices.append(slice_dict['slice_id'])
+    assert len(clean_slices) == 1
+    return clean_slices[0]
 
 
-assert get_unique_claim(parse_slices(TEST_LIST)) == {3}
+# assert get_unique_claim(parse_slices(TEST_LIST)) == {3}
 
 
 if __name__ == '__main__':
@@ -89,5 +84,4 @@ if __name__ == '__main__':
     list_of_slices = parse_slices(raw_in)
     overlaps = find_overlaps(list_of_slices)
     print(count_overlaps(overlaps))
-
     print(get_unique_claim(list_of_slices))
