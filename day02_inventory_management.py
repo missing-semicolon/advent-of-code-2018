@@ -5,7 +5,7 @@ https://adventofcode.com/2018/day/2
 
 def create_list_of_boxes():
     list_of_boxes = list()
-    with open('./day02_input.txt', 'r') as f:
+    with open('./data/day02_input.txt', 'r') as f:
         for line in f:
             list_of_boxes.append(line)
     return list_of_boxes

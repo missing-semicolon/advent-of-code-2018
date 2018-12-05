@@ -8,7 +8,7 @@ LogEntry = Tuple[datetime, str]
 
 
 def load_data() -> List[str]:
-    with open('./day04_input.txt', 'r') as f:
+    with open('./data/day04_input.txt', 'r') as f:
         raw_record = [line.strip().lower() for line in f.readlines()]
 
     return raw_record

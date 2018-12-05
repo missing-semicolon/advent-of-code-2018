@@ -7,7 +7,7 @@ from collections import Counter
 
 
 def load_file():
-    with open('./day03_input.txt', 'r') as file:
+    with open('./data/day03_input.txt', 'r') as file:
         raw_lines = [line.strip() for line in file.readlines()]
     return raw_lines
 
