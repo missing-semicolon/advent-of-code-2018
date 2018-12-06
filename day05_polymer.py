@@ -1,6 +1,7 @@
 from typing import Set
 import re
 
+
 def load_data() -> str:
     with open('./data/day05_input.txt', 'r') as f:
         data = [line.strip() for line in f.readlines()]
@@ -13,16 +14,14 @@ def replace_rule(a: str, b: str) -> bool:
 
 
 def replace_matches(x: str) -> str:
-    replaced = True
-    while replaced:
-        replaced = False
-        for i in range(1, len(x)):
-            prev = x[i - 1]
-            cur = x[i]
-            if replace_rule(prev, cur):
-                x = x[:i - 1] + x[i + 1:]
-                replaced = True
-                break
+    i = 0
+    while i < len(x) - 1:
+        cur = x[i]
+        nxt = x[i + 1]
+        if replace_rule(cur, nxt):
+            x = x[:i] + x[i + 2:]
+            i = max(-1, i - 2)
+        i += 1
     return x
 
 
@@ -59,5 +58,5 @@ assert remove_type('dabAcCaCBAcCcaDA', 'a') == 'dbcCCBcCcD'
 assert improve_polymer('dabAcCaCBAcCcaDA') == 4
 
 data = load_data()
-# print(len(replace_matches(data)))
+print(len(replace_matches(data)))
 print(improve_polymer(data))
