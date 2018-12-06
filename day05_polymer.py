@@ -1,3 +1,5 @@
+from typing import Set
+import re
 
 def load_data() -> str:
     with open('./data/day05_input.txt', 'r') as f:
@@ -5,29 +7,57 @@ def load_data() -> str:
 
     return ''.join(data)
 
-def replace_matches(x: str) -> str:
-    if len(x) == 1:
-        return x
 
-    for i, (cur, nxt) in enumerate(zip(x[:-1], x[1:])):
-        if i == len(x):
-            return x
-        if cur != nxt and (cur == nxt.upper() or cur.upper() == nxt):
-            if len(x) == 2:
-                return ''
-            else:
-                x = x[:i] + x[i + 2:]
-                x = replace_matches(x)
-                return x
+def replace_rule(a: str, b: str) -> bool:
+    return a != b and a.upper() == b.upper()
+
+
+def replace_matches(x: str) -> str:
+    replaced = True
+    while replaced:
+        replaced = False
+        for i in range(1, len(x)):
+            prev = x[i - 1]
+            cur = x[i]
+            if replace_rule(prev, cur):
+                x = x[:i - 1] + x[i + 1:]
+                replaced = True
+                break
     return x
 
 
-assert replace_matches('aAc') == 'c'
+def get_unit_types(polymer: str) -> Set[str]:
+    return {char for char in polymer.lower()}
+
+
+def remove_type(polymer: str, type: str) -> str:
+    return re.sub(type, '', polymer, flags=re.IGNORECASE)
+
+
+def improve_polymer(polymer: str) -> int:
+    polymer_lengths = list()
+    unit_types = get_unit_types(polymer)
+
+    for unit_type in unit_types:
+        shortened = remove_type(polymer, unit_type)
+        polymer_lengths.append(len(replace_matches(shortened)))
+
+    return sorted(polymer_lengths)[0]
+
+
+assert replace_rule('a', 'A') is True
+assert replace_rule('a', 'a') is False
+assert replace_rule('a', 'b') is False
 assert replace_matches('aA') == ''
+assert replace_matches('aAc') == 'c'
 assert replace_matches('abBA') == ''
 assert replace_matches('abAB') == 'abAB'
 assert replace_matches('aabAAB') == 'aabAAB'
 assert replace_matches('dabAcCaCBAcCcaDA') == 'dabCBAcaDA'
 
+assert remove_type('dabAcCaCBAcCcaDA', 'a') == 'dbcCCBcCcD'
+assert improve_polymer('dabAcCaCBAcCcaDA') == 4
+
 data = load_data()
-print(replace_matches(data))
+# print(len(replace_matches(data)))
+print(improve_polymer(data))
