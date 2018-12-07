@@ -44,7 +44,9 @@ def get_max_coords(list_of_coords: List[coordinate]) -> Point:
     return max_r, max_d
 
 
-def get_max_finite_area(coordinate_labels: Dict[Point, int], max_r: int, max_d: int) -> List[int]:  # noqa: E501
+def get_max_finite_area(coordinate_labels: Dict[Point, int],
+                        max_r: int,
+                        max_d: int) -> List[int]:
     infinite_labels = set()
     # left / right sides
     for d in range(max_d):
@@ -61,7 +63,7 @@ def get_max_finite_area(coordinate_labels: Dict[Point, int], max_r: int, max_d: 
     return areas_no_infinite
 
 
-def create_coordinate_labels(list_of_coords):  # noqa: E501
+def create_coordinate_labels(list_of_coords):
     coordinate_labels = dict()
     max_r, max_d = get_max_coords(list_of_coords)
 
@@ -78,7 +80,8 @@ def create_coordinate_labels(list_of_coords):  # noqa: E501
     return coordinate_labels
 
 
-def find_safe_region_size(list_of_coords: List[coordinate], distance_thresh: int) -> int:  # noqa: E501
+def find_safe_region_size(list_of_coords: List[coordinate],
+                          distance_thresh: int) -> int:
     coordinate_labels = dict()
     max_r, max_d = get_max_coords(list_of_coords)
 
