@@ -78,10 +78,26 @@ def create_coordinate_labels(list_of_coords):  # noqa: E501
     return coordinate_labels
 
 
+def find_safe_region_size(list_of_coords: List[coordinate], distrance_thresh: int) -> int:  # noqa: E501
+    coordinate_labels = dict()
+    max_r, max_d = get_max_coords(list_of_coords)
+
+    for r in range(max_r):
+        for d in range(max_d):
+            distances = [coord.get_distance((r, d))
+                         for coord in list_of_coords]
+
+            if sum(distances) <= distrance_thresh:
+                coordinate_labels[(r, d)] = sum(distances)
+    return len(coordinate_labels.keys())
+
+
 test_coord_list = parse_coods(TEST_COORDS)
 max_r, max_d = get_max_coords(test_coord_list)
 coordinate_labels = create_coordinate_labels(test_coord_list)
 assert max(get_max_finite_area(coordinate_labels, max_r, max_d)) == 17
+
+assert find_safe_region_size(test_coord_list, 30) == 16
 
 
 assert coordinate_labels[(0, 0)] == 0
@@ -94,3 +110,6 @@ max_r, max_d = get_max_coords(coord_list)
 coordinate_labels = create_coordinate_labels(coord_list)
 assert all([coordinate_labels[(c.r, c.d)] == c.name for c in coord_list])
 print(max(get_max_finite_area(coordinate_labels, max_r, max_d)))
+
+# Soluation 2
+print(find_safe_region_size(coord_list, 10000))
