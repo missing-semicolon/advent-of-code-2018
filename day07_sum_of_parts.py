@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Set, Tuple
 import re
 
 rgx = 'Step ([A-Z]) must be finished before step ([A-Z]) can begin'
@@ -12,15 +12,20 @@ Step D must be finished before step E can begin.
 Step F must be finished before step E can begin.
 """
 
+RelationDict = Dict[str, List[str]]
 
-def load_data() -> str:
+
+def load_data() -> List[str]:
     with open('./data/day07_input.txt', 'r') as f:
         return [line.strip() for line in f.readlines()]
 
 
-def create_direction_dict(direction_list: List[str]) -> Dict[str, List[str]]:
-    parent_to_child = dict()
-    child_to_parents = dict()
+def create_direction_dict(
+    direction_list: List[str]
+) -> Tuple[RelationDict, RelationDict]:
+
+    parent_to_child: Dict = dict()
+    child_to_parents: Dict = dict()
     rgx_out = [re.match(rgx, direction).groups()
                for direction in direction_list]
 
@@ -46,7 +51,7 @@ def add_children_to_pending(parent, pending, parent_to_child):
 
 
 def create_order(parent_to_child: Dict[str, List[str]],
-                 child_to_parents: Dict[str, List[str]]) -> List[str]:
+                 child_to_parents: Dict[str, List[str]]) -> str:
     # Find the head:
     parents = set()
     children = set()
@@ -56,24 +61,20 @@ def create_order(parent_to_child: Dict[str, List[str]],
             children.add(child)
 
     head = parents - children
-    if len(head) > 1:
-        for head_cand in head:
-            if head_cand in parent_to_child.keys():
-                head = head_cand
-                break
-    else:
-        head = head.pop()
+    pending = list(head)
 
-    order = list()
-    done = set()
-    pending = list()
+    order: List = list()
+    done: Set = set()
 
-    order.append(head)
-    done.add(head)
-    pending = add_children_to_pending(head, pending, parent_to_child)
     while len(pending) > 0:
         for candidate in sorted(pending):
-            if all(cand_parent in done for cand_parent in child_to_parents[candidate]):  # noqa: E501
+            if (
+                    candidate in child_to_parents.keys()
+                    and all(cand_parent in done
+                            for cand_parent in child_to_parents.get(candidate))
+                ) or (
+                    candidate not in child_to_parents.keys()
+            ):
                 order.append(candidate)
                 done.add(candidate)
                 pending.remove(candidate)
