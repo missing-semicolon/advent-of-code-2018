@@ -1,21 +1,6 @@
 from typing import List, Dict
 
-"""
-0, (1), 2
-
-1 + 1 % 3 = 2
-1 + 2 % 3 = 0
-
-0, 1, (2), 3
-
-2 + 1 % 4 = 3
-2 + 2 % 4 = 0
-
-0, 1, 2, (3)
-
-3 + 1 % 4 = 0
-3 + 2 % 4 = 1
-"""
+from collections import deque
 
 
 def play_game_old(num_players: int, highest_marble: int) -> int:
@@ -54,17 +39,59 @@ def play_game_old(num_players: int, highest_marble: int) -> int:
     return max([v for v in scoreboard.values()])
 
 
-# assert play_game(9, 25) == 32
-# assert play_game(10, 1618) == 8317
-# assert play_game(13, 7999) == 146373
-# assert play_game(17, 1104) == 2764
-# assert play_game(21, 6111) == 54718
-# assert play_game(30, 5807) == 37305
+def play_game(num_players: int, highest_marble: int) -> int:
+    circle = deque([0])
+    # Current marble always 0
+    scoreboard: Dict[int, int] = {x: 0 for x in range(num_players + 1)}
+
+    def move_left(n: int) -> None:
+        """
+        v
+        1 2 4 3 0
+        v
+        0 1 2 4 3
+        pop -> appendleft
+        """
+        for _ in range(n):
+            val = circle.pop()
+            circle.appendleft(val)
+
+    def move_right(n: int) -> None:
+        """
+        v
+        1 2 4 3 0
+        v
+        2 4 3 0 1
+        popleft -> append
+        """
+        for _ in range(n):
+            val = circle.popleft()
+            circle.append(val)
+
+    for marble in range(highest_marble + 1):
+        if marble == 0:
+            continue
+
+        player = marble % num_players
+        if player == 0:
+            player = num_players
+        if marble % 23 != 0:
+            move_right(2)
+            circle.appendleft(marble)
+        else:
+            scoreboard[player] += marble
+            move_left(7)
+            scoreboard[player] += circle.popleft()
+    return max([v for v in scoreboard.values()])
+
+
+assert play_game(9, 25) == 32
+assert play_game(10, 1618) == 8317
+assert play_game(13, 7999) == 146373
+assert play_game(17, 1104) == 2764
+assert play_game(21, 6111) == 54718
+assert play_game(30, 5807) == 37305
 
 # 459 players; last marble is worth 72103 points
-print(play_game_old(459, 72103))
-
-# print(play_game(459, (459 * 23 * 1) + 21))
-# print(play_game(459, (459 * 23 * 2) + 21))
-
-# print(play_game(459, 72103 * 100))
+# print(play_game_old(459, 72103))
+print(play_game(459, 7210300))
